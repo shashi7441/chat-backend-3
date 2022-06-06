@@ -88,6 +88,8 @@ let otherUserId:any ;
         },
       ],
     });
+ 
+
     if (!cheackFriend) {
       return next(new ApiError("you are not friend", 404));
     }
@@ -118,11 +120,17 @@ let otherUserId:any ;
     else{
       otherUserId = cheackFriend.senderId
     }
+
+      
+      console.log("in create",numberId);
+      console.log("create",req.id);
+      
+
       const createData =  await messages.create({
         id: myId,
         to: numberId,
         from: req.id,
-        conversationId:null ,
+        conversationId:cheackFriend.id ,
         message: messageTrim,
         state: "unedited",
       });
@@ -132,9 +140,13 @@ let otherUserId:any ;
         conversationId:createData.conversationId,
         userId:req.id
       }
-    io.emit("chat-message", createData.message)
-     
+      io.emit("join-room", cheackFriend.id)
 
+    io.to(cheackFriend.id).emit("chat-message", {
+     msg: createData.message,
+     conversationId:cheackFriend.id
+    })
+     
       // io.sockets.in().emit('chat-message"', {msg: 'hello'});
 
       const messageData = await messages.findAll({
@@ -163,10 +175,15 @@ let otherUserId:any ;
           },
         ],
       });
-    
+     
 
-     return res.render("test",{data: [], userId:req.id, conversationId:"",chatWith:"",friendRequest:"",seeRequest:"",
+     
+    
+     return res.render("test",{data: [], userId:req.id, conversationId:"",chatWith:cheackFriend.reciever.fullName,friendRequest:"",seeRequest:"",
       showmessages:messageData, sendMessage:"", userList:[], recieverId:numberId})
+
+
+
     
   } catch (e: any) {
     // console.log("dddd", e);
@@ -188,6 +205,29 @@ export let seeMessages = async (
     if (checkId === false) {
       return next(new ApiError("please put valid id ", 400));
     }
+
+    const cheackFriend = await conversation.findOne({
+      where: {
+        [Op.or]: [
+          {
+            senderId:[req.id ,numberId],
+          },
+          {
+            recieverId:[req.id,numberId],
+          },
+        ],
+        state: 'accepted',
+      },
+      include: [
+        {
+          model: users,
+          attributes: ["fullName"],
+          as: "reciever",
+        },
+      ],
+    });
+ 
+  io.emit("join-room", cheackFriend.id)
 
     const messageData = await messages.findAll({
       where: {             
@@ -220,14 +260,17 @@ export let seeMessages = async (
         message: "no chat found",
       });
     }
-      const loginId = req.id 
-     const otherUser = id
-// const users = await  userSignupValidation.
+     
+const loginId = req.id 
+const otherUser = id
+
+
 const user=await users.findOne({
   where:{
     id:otherUser
   }
 })
+
 
 
       res.render("test",{data: [], userId:loginId, conversationId:"", chatWith:user.fullName,friendRequest:"",seeRequest:"",

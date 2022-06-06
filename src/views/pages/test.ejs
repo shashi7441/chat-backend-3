@@ -133,25 +133,29 @@
         </div>
         <div class="middle">
             <div class="tumbler" id="appendDiv">
+                
+                
                 <div class="messages" id="two">
-
-              
-                <% for(var i=0; i<showmessages.length; i++) {%>
+                        <% for(var i=0; i<showmessages.length; i++) {%>
                         <% if(showmessages[i].from === userId){%>
                         <div class="clip sent">
                             <div class="text"><%= showmessages[i].message%></div>
                         </div>
+                        <% } %> 
 
-                        <%}else{%>
+                       <% if(showmessages[i].to === userId ){%>
                         <div class="clip received">
                             <div class="text"><%= showmessages[i].message%></div>
                         </div>
                         <% }%>
+
                         <% } %> 
-                   <h1></h1>
+                       
                 </div>
                 <div class="seen">Seen</div>
             </div>
+
+
         </div>
   
         <div class="bottom">
@@ -177,6 +181,13 @@
 socket.on("connection", ()=>{
     console.log("connected");
 })
+
+socket.on("join-room",(conversationId)=>{
+
+
+
+    console.log("client side",conversationId);
+})
     mailDiv.addEventListener("keypress",()=>{
         socket.emit('typing','typing...')
     })
@@ -190,8 +201,10 @@ socket.on("connection", ()=>{
        const active =  document.querySelector('p')
        active.innerHTML = 'Active now' 
     })
-    socket.on('chat-message',(data)=>{
-        console.log(data);
+
+
+    socket.on('chat-message',(data)=>{  
+          console.log("client side msg", data);
         const mailDiv = document.getElementById('two')
         const para = document.createElement("div");
         para.className = "clip received"
@@ -207,6 +220,7 @@ socket.on("connection", ()=>{
     })
 
 
+    
 const search = document.querySelector(".search")
 
 

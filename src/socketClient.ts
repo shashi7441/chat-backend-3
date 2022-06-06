@@ -44,7 +44,11 @@ io.on("connection", (socket) => {
 console.log("connected");
 
 socket.on("disconnect", ()=>{
-  
+  console.log("Disconnected");
+})
+
+socket.on("join-room",(conversationId)=>{
+socket.join(conversationId)
 })
 
 socket.on("typing",(msg)=>{
@@ -56,9 +60,11 @@ socket.on("stopTyping",(msg)=>{
   io.emit("stopTyping", msg)
 }
 )
-socket.on("chat-message",(msg)=>{
+socket.on("chat-message",({msg, conversationId})=>{
+  //  io.to().emit("chat-message", data)
   
-  io.emit("chat-message", msg)
+
+  io.to(`room_${conversationId}`).emit("chat-message", {msg:msg, conversationId:conversationId})
 }
 )
 
