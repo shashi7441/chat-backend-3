@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style3.css">
+    <title>Document</title>
+</head>
+<body>
+    
+<div class="page-content page-container" id="page-content">
+    <div class="padding">
+       <div class="row">
+        <% for(var i=0; i<data.length; i++) {%>
+          <div class="col-sm-6">
+            
+             <div class="list list-row block">
+                <div class="list-item" data-id="19">
+                    <div class="flex">
+                        <a href="#" class="item-author text-color" data-abc="true">userId: <%= data[i].id%></a>
+                     </div>
+                   <!-- <div><a href="#" data-abc="true"><span class="w-48 avatar gd-warning"><%= data[i].id%></span></a></div> -->
+                   <div class="flex">
+                      <a href="#" class="item-author text-color" data-abc="true">fullName: <%= data[i].fullName%></a>
+                   </div>
+                   
+                   <a href="http://127.0.0.1:8000/api/sendRequest/<%- data[i].id%>"> add Friend</a>
+                   <div class="no-wrap">
+                   </div>
+                </div>
+                <div class="list-item" data-id="7">
+                   <div><a href="#" data-abc="true"><span class="w-48 avatar gd-primary"><img src="https://img.icons8.com/color/48/000000/administrator-male.png" alt="."></span></a></div>
+                </div>
+                <div class="list-item" data-id="4">
+                </div>
+             </div>
+          </div>
+
+            <% } %> 
+       </div>
+    </div>
+ </div>
+</body>
+</html>
