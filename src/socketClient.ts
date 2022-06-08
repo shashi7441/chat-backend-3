@@ -47,9 +47,9 @@ socket.on("disconnect", ()=>{
   console.log("Disconnected");
 })
 
-socket.on("join-room",(conversationId)=>{
-socket.join(conversationId)
-})
+// socket.on("join-room",(conversationId)=>{
+// socket.join(conversationId)
+// })
 
 socket.on("typing",(msg)=>{
   io.emit("typing", msg)
@@ -60,25 +60,24 @@ socket.on("stopTyping",(msg)=>{
   io.emit("stopTyping", msg)
 }
 )
-socket.on("chat-message",({msg, conversationId})=>{
-  //  io.to().emit("chat-message", data)
-  
+socket.on("chat-message",(data)=>{
+  const{ msg, conversationId,userId, recieverId }  = data
+  io.emit("chat-message", {
+    msg: msg,
+    conversationId:conversationId,
+    userId:userId,
+    recieverId:recieverId
+   })
 
-  io.to(`room_${conversationId}`).emit("chat-message", {msg:msg, conversationId:conversationId})
 }
 )
-
-
-socket.on("sendRequest",(msg)=>{
-io.emit("sendRequest", msg)
+socket.on("sendRequest", (data)=>{
+const{senderId, recieverId} = data
+io.emit("sendRequest",{
+  senderId:senderId,
+  recieverId:recieverId
+} )
 })
-  
-
-socket.on("sendRequest",(msg)=>{
-  io.emit("sendRequest", msg)
-  } )
-
-
 
 })
 

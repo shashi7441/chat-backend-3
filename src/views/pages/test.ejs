@@ -35,10 +35,13 @@
         <div class="modal-header">
             <div class="input-group mb-3">
                 <input id="search" type="search" name="search" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                
                 <div class="input-group-append">
                     <button type="button" class="btn btn-primary search">search</button>
                 </div>
+
               </div>
+
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -80,13 +83,13 @@
                 <% for(var i=0; i<data.length; i++) { %>
             <div class="person">
                 <div class="box">
-                    <div class="image"> <img  src="https://cdn2.bigcommerce.com/server5400/3po1k2/products/8171/images/14559/161_light_blue__46032.1418747956.1280.1280.jpg?c=2g" width="50px" height="50px" alt=""> </div>
+                    <div class="image"> <img class="avatar" alt="Avatar" src=" " name = "<%= data[i].fullName %>" width="50px" height="50px" alt=""> </div>
                     <div class="online"></div>
                 </div>
                 <div class="information">
                     <div class="username" style="display:flex; justify-content:space-between" >
                         <div>
-                            <a href='http://127.0.0.1:8000/api/conversation/message/<%- data[i].id%>'><%= data[i].fullName %></a>
+                            <a class="userName"  href='http://127.0.0.1:8000/api/conversation/message/<%- data[i].id%>'><%= data[i].fullName %></a>
                             <%-friendRequest%></a>
                         </div>
                          <div>
@@ -107,9 +110,10 @@
     <div class="right">
         <div class="top">
             <div class="box">
-                <div class="image"> <img src="https://cdn2.bigcommerce.com/server5400/3po1k2/products/8171/images/14559/161_light_blue__46032.1418747956.1280.1280.jpg?c=2" width="35px" height="35px" alt=""> </div>
+                <div class="image"> <img  src="" width="35px" height="35px" alt=""> </div>
                 <div class="online"></div>
             </div>
+
             <div class="information">
                 <div class="username"> <a href="https://www.instagram.com/thecolorlesseyes/">thecolorlesseyes</a></div>
                 <div class="name"><p style="color: rgb(4, 121, 86);">Active now</p></div>
@@ -125,7 +129,7 @@
                       <div class="collapse" id="collapseExample">
                         <div class="card card-body" style="margin-top:40%; display: flex; flex-direction: column;width: 106px;height: 55px;">
                             <div class="seeFriendRequestParent" >
-                                <a class="seeFriendRequest" href="http://127.0.0.1:8000/api/friendrequest"><i class="bi bi-bell-fill"></i></a><span><%-seeRequest.length%></span>
+ <a class="seeFriendRequest" href="http://127.0.0.1:8000/api/friendrequest"><i class="bi bi-bell-fill"></i></a><span><%-seeRequest.length%></span>
                             </div>
                         </div>
                       </div>
@@ -161,7 +165,10 @@
         <div class="bottom">
             <div class="cup">
                 <form class="cup" action="http://127.0.0.1:8000/api/conversation/message/<%=recieverId%>" method="post">
-                   <input type="text" id="message" name="message" cols="30"  rows="1" placeholder="Message..." autocomplete="off" required>
+              
+                    <input type="text" id="message" name="message" cols="30"  rows="1" placeholder="Message..." autocomplete="off" required>
+                     <input type="hidden" id="recieverId" value="<%=recieverId%>" >
+                     <input type="hidden", id="senderId", value="<%=userId%>">
                     <button type="submit" class="send">Send</button>
                 </form>
             </div>
@@ -184,10 +191,10 @@ socket.on("connection", ()=>{
 
 socket.on("join-room",(conversationId)=>{
 
-
-
     console.log("client side",conversationId);
 })
+
+
     mailDiv.addEventListener("keypress",()=>{
         socket.emit('typing','typing...')
     })
@@ -202,9 +209,23 @@ socket.on("join-room",(conversationId)=>{
        active.innerHTML = 'Active now' 
     })
 
+     socket.on("sendRequest",(data)=>{
+        const{senderId, recieverId} = data
+  console.log(data);
+
+     })
+
 
     socket.on('chat-message',(data)=>{  
-          console.log("client side msg", data);
+        const{ msg, conversationId,userId, recieverId }  = data
+        console.log("sdfghjk",data);
+
+
+        const senderId = document.getElementById("senderId").value
+        const recieversId = document.getElementById("recieverId").value
+        
+        if(senderId===recieverId && recieversId ===userId){
+        console.log("client side msg", msg);
         const mailDiv = document.getElementById('two')
         const para = document.createElement("div");
         para.className = "clip received"
@@ -212,38 +233,50 @@ socket.on("join-room",(conversationId)=>{
         paraTwo.className = "text"
         const h1 = document.createElement("p");
         h1.className = "text"
-        h1.innerText = data
+        h1.innerText = msg
         paraTwo.appendChild(h1)
         para.appendChild(paraTwo)
         mailDiv.appendChild(para)
-      
+        }
     })
 
-
-    
 const search = document.querySelector(".search")
 
 
 search.addEventListener("click", async (e)=>{
  const inputSearch = document.querySelector("#search")   
 
- await fetch(`http://127.0.0.1:8000/api/auth/user?search=${inputSearch.value}`,
-{
-    method: 'POST',
+})
+
+function generateAvatar(text, foregroundColor, backgroundColor) {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    canvas.width = 200;
+    canvas.height = 200;
+
+    // Draw background
+    context.fillStyle = backgroundColor;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw text
+    context.font = "bold 100px Assistant";
+    context.fillStyle = foregroundColor;
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+    return canvas.toDataURL("image/png");
 }
-).then((result)=>{
-    console.log("<<<<<<<<<",result);
-}).catch((e)=>{
-console.log(">>>>>>>",e);
-})
-console.log(inputSearch.value);
+const userName = document.querySelectorAll(".userName")
+console.log(userName);
 
+const image = document.querySelectorAll(".avatar")
 
-})
-
-
-
-
+for (i = 0; i < image.length; ++i) {
+ 
+    image[i].src = generateAvatar( image[i].name[0], "white", "#009578");
+}
 </script>
 </body>
 </html>

@@ -109,8 +109,6 @@ const form = document.querySelector("form")
 const footer = document.querySelector("footer")
 const input = document.querySelector("textarea")
 
-const h1 = document.querySelector("h1")
-console.log(h1);
 socket.on('chat-message', function(msg) {
   h1.innerText = msg
   // const item = document.createElement('li');

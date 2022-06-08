@@ -66,6 +66,8 @@ export let sendMessage = async (
         message: "message not be empty",
       });
     }
+
+
     const messageTrim: string = message.trim();
 let otherUserId:any ;
     const cheackFriend = await conversation.findOne({
@@ -94,6 +96,14 @@ let otherUserId:any ;
       return next(new ApiError("you are not friend", 404));
     }
     const value = cheackFriend.dataValues.state;
+    if(req.id ===numberId){
+      return res.json({
+        statusCode:400,
+        message:"sender and reciever are not  same "
+      })
+    }
+  
+
 
     if (value === "blocked") {
       return res.json({
@@ -140,15 +150,19 @@ let otherUserId:any ;
         conversationId:createData.conversationId,
         userId:req.id
       }
-      io.emit("join-room", cheackFriend.id)
 
-    io.to(cheackFriend.id).emit("chat-message", {
-     msg: createData.message,
-     conversationId:cheackFriend.id
-    })
+    // io.to(cheackFriend.).emit("chat-message", {
+    //  msg: createData.message,
+    //  conversationId:cheackFriend.id
+    // })
+    io.emit("chat-message", {
+      msg: createData.message,
+      conversationId:cheackFriend.id,
+      userId:req.id,
+      recieverId:numberId
+     })
+
      
-      // io.sockets.in().emit('chat-message"', {msg: 'hello'});
-
       const messageData = await messages.findAll({
           where: {             
             to:
@@ -227,7 +241,7 @@ export let seeMessages = async (
       ],
     });
  
-  io.emit("join-room", cheackFriend.id)
+          // io.emit("join-room", cheackFriend.id)
 
     const messageData = await messages.findAll({
       where: {             

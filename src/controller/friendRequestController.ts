@@ -50,9 +50,6 @@ export let sendFriendRequest = async (
       },
     });
 
-
-    console.log(cheackFriendRequest);
-    
     if (cheackFriendRequest) {
       const senderId = cheackFriendRequest.dataValues.senderId;
       const status = cheackFriendRequest.dataValues.state;
@@ -87,7 +84,14 @@ export let sendFriendRequest = async (
         senderId: req.id,
         recieverId: numberId,
         id: myId,
+      
       });
+
+      io.emit("sendRequest",{
+        senderId:req.id,
+        recieverId:numberId
+      } )
+
       const userData = await conversation.findAll({
         where: {
           recieverId: id,
@@ -267,7 +271,9 @@ export let seeFriendRequest = async (
 ) => {
   try {
     const id = req.id;
-    console.log(id);
+    // console.log(id);
+    console.log("<<<<<<<<<<<<<<<<<<<<<<<<");
+    console.log("MMMMMMMMMMMMMMMMMM", id);
     
     const userData = await conversation.findAll({
       where: {
@@ -283,6 +289,8 @@ export let seeFriendRequest = async (
         },
       ],
     });    
+
+    
     if (userData.length == 0) {
       return res.render("friendRequest", {
         userData:[],
@@ -303,6 +311,8 @@ export let seeFriendRequest = async (
     //   statusCode: 200,
     //   data: userData,
     // });
+
+    
   } catch (e: any) {
     return next(new ApiError(e, 404));
   }

@@ -31,7 +31,7 @@ messageRoutes.delete("/conversation/message/:id", tokenVarify, deleteChats);
 messageRoutes.put("/conversation/message/edit/:id", tokenVarify,editmessage )
 
 messageRoutes.delete(
-  "/conversation/message/allchat/:id",
+  "/conversation/message/allchat/:id", 
   tokenVarify,
   deleteAllChat
 );

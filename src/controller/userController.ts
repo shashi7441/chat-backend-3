@@ -233,70 +233,66 @@ export let searchFriend = async (
     console.log("hiii");
     
     const search: any = req.query.search;
- 
-    
-    // if (search) {
-    //   const originalSearch = search.replace(/[' "]+/g, "");
-    //   const Op = sequelize.Op;
+   console.log("shashu",req.query);
+   
 
-    //   const user = await users.findAll(
-    //     {
-    //       where: {
-    //         id: {
-    //           [Op.ne]: [req.id],
-    //         },
-
-    //         fullName: {
-    //           [Op.iRegexp]: `${originalSearch}`,
-    //         },
-    //         isVerified: true,
-    //       },
-    //     },
-    //     { attributes: ["email", "fullName", "id"] }
-    //   );
-
-
-        const userId =req.id
-        const loginId = req.id
-        const {userData} = await getAllUser(req , res  ,userId) 
-        const userList =  await searchFriendForFrontend(req,res, userId)
-        const friendRequests = await friendRequestCount(userId)
-
-            res.render("test",{data: userData, userId:loginId, conversationId:"",chatWith:"",
-             showmessages:[], sendMessage:"", userList:userList, recieverId:"", friendRequest:"", seeRequest:friendRequests  })
+    if(!search){
+      const userId =req.id
+      const loginId = req.id
+      const {userData} = await getAllUser(req , res  ,userId) 
+      const userList =  await searchFriendForFrontend(req,res, userId)
+      const friendRequests = await friendRequestCount(userId)
       
-      // if (user.length == 0) {
-      //   return next(new ApiError("data not found", 400));
-      // }
-        // const userId = req.id
-        // const {userData} = await getAllUser(req , res  ,userId)
-        
-        // res.render("test",{data: userData, userId:userId, conversationId:"",
-        // showmessages:[], sendMessage:"", userList:userList, recieverId:""})
-
-      // return res.json({
-      //   statusCode: 200,
-      //   data: userList,
-      // });
-    // } else {
-    //   const user = await users.findAll({
-    //     where: {
-    //       id: {
-    //         [Op.ne]: [req.id],
-    //       },
-    //     },
-    //     attributes: ["email", "fullName", "id"],
-    //   });
-    //   return res.json({
-    //     statusCode: 200,
-    //     data: user,
-    //   });
-    // }
-
+      res.render("test",{data: userData, userId:loginId, conversationId:"",chatWith:"",
+      showmessages:[], sendMessage:"", userList:userList, recieverId:"", friendRequest:"", seeRequest:friendRequests  })
+      
+    }
     
+    if (search) {
+      const originalSearch = search.replace(/[' "]+/g, "");
+      const Op = sequelize.Op;
+
+      const user = await users.findAll(
+        {
+          where: {
+            id: {
+              [Op.ne]: [req.id],
+            },
+
+            fullName: {
+              [Op.iRegexp]: `${originalSearch}`,
+            },
+            isVerified: true,
+          },
+        },
+        { attributes: ["email", "fullName", "id"] }
+      );
+ 
+      console.log("WWWWWWWWWWWWW",user);
+        return user
+  
+
+    }
   } catch (e: any) {
     return next(new ApiError(e.message, 400));
   }
 };
 
 
+// export let userLogout = (req:Request, res:Response)=>{
+//   try{
+
+//     //  return  res.clearCookie("access_token").send("logut successful")
+//       res.
+
+//     // return res.redirect("http://localhost:8000/api/auth/user/login")
+
+//   }catch(e:any){
+//     return res.json(
+//       {
+//         statusCode:400,
+//         message:e.message
+//       }
+//     )
+//   }
+// }

@@ -113,13 +113,17 @@ export let userVerifiedEmail = async (req: Request, res: Response) => {
     });
     //  const date:any = new Date()
     if (values === true) {
-      res.cookie("access_token",`${jwtToken}`, {expires: new Date(Date.now() + 9999999), httpOnly: false})
-      const userId = findData.id
-      const {userData} = await getAllUser(req , res  ,userId)
-  const userList =  await searchFriendForFrontend(req,res, userId)
-       res.render("test",{data: userData, userId:userId, conversationId:"",chatWith:"",
-         showmessages:[], sendMessage:"", userList:userList, recieverId:"", friendRequest:"" , seeRequest:""})
-    }
+  //     res.cookie("access_token",`${jwtToken}`, {expires: new Date(Date.now() + 9999999), httpOnly: false})
+  //     const userId = findData.id
+  //     const {userData} = await getAllUser(req , res  ,userId)
+  // const userList =  await searchFriendForFrontend(req,res, userId)
+  //      res.render("test",{data: userData, userId:userId, conversationId:"",chatWith:"",
+  //        showmessages:[], sendMessage:"", userList:userList, recieverId:"", friendRequest:"" , seeRequest:""})
+    
+    return res.redirect("http://localhost:8000/api/auth/user/login")
+
+        }
+
     
     if (otpExpTime < Date.now()) {
       return res.render("verifyemail", {
@@ -129,6 +133,8 @@ export let userVerifiedEmail = async (req: Request, res: Response) => {
 
 
     if (values === false) {
+      console.log("hii");
+      
       const update = await users.update(
         { isVerified: true },
         {
@@ -137,13 +143,11 @@ export let userVerifiedEmail = async (req: Request, res: Response) => {
           },
         }
       );
-      res.cookie("access_token",`${jwtToken}`, {expires: new Date(Date.now() + 9999999), httpOnly: false})
-      const userId = findData.id
-      const {userData} = await getAllUser(req , res  ,userId)
-  const userList =  await searchFriendForFrontend(req,res, userId)
-       res.render("test",{data: userData, userId:userId, conversationId:"",chatWith:"",seeRequest:"",
-         showmessages:[], sendMessage:"", userList:userList, recieverId:""})
-    }
+
+      return res.redirect("http://localhost:8000/api/auth/user/login")
+        }
+
+
   } catch (e: any) {
     console.log(e);
     
@@ -161,10 +165,8 @@ export let pageNotFound = async (
   next: NextFunction
 ) => {
   try {
-    return res.json({
-      statusCode: 404,
-      message: "page not found ",
-    });
+   res.render("404")
+
   } catch (e: any) {
     return res.json({
       statusCode: 500,

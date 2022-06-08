@@ -25,8 +25,3 @@ res.render("verifyemail")
 
 userRoutes.get("/searchFriend", tokenVarify, searchFriend);
 
-// userRoutes.get("/search", (req:Request, res:Response)=>{
-// console.log(req.cookies);
-
-// res.render("userlist")
-// })
